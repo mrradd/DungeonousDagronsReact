@@ -63,7 +63,7 @@ class Clock extends React.Component{
 
 /******************************************************************************
 * Class DataGrid *
-* Displays whose turn it is.
+* Displays a list of the characters and some info about them.
 ******************************************************************************/
 class DataGrid extends React.Component{
   constructor(props){

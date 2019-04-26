@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import {InitiativeTracker5e} from './InitiativeTracker5e';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+
+ReactDOM.render(<InitiativeTracker5e/>, document.getElementById('root'));
 

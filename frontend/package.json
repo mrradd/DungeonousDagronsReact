@@ -4,9 +4,10 @@
   "private": true,
   "dependencies": {
     "react": "^16.8.6",
+    "react-data-grid": "6.1.0",
+    "react-data-grid-addons": "^6.1.0",
     "react-dom": "^16.8.6",
-    "react-scripts": "3.0.0",
-    "react-data-grid": "6.1.0"
+    "react-scripts": "3.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

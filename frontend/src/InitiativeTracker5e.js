@@ -42,12 +42,6 @@ class Clock extends React.Component{
   }
 }
 
-const turnOwnerRow = () => {
-  return(
-    
-  );
-}
-
 /******************************************************************************
 * Class DataGrid *
 * Displays a list of the characters and some info about them.
@@ -58,17 +52,17 @@ class DataGrid extends React.Component{
     this.state = {
       rows: [],
       columns: [
-        {key:'name',       name:'Name',       editable: true},
-        {key:'initiative', name:'Initiative', editable: true},
-        {key:'hp',         name:'HP',         editable: true},
-        {key:'ac',         name:'AC',         editable: true},
-        {key:'spellDC',    name:'Spell DC',   editable: true},
-        {key:'notes',      name:'Notes',      editable: true}
+        'Name',
+        'Initiative',
+        'HP',
+        'AC',
+        'Spell DC',
+        'Notes'
       ],
       idCounter: 0
     };
   }
-  
+
   /**
    * Adds a row to the row list.
    */
@@ -81,63 +75,91 @@ class DataGrid extends React.Component{
   };
   
   /**
+   * Delete a row to the row list.
+   */
+  deleteRow = () => {
+    //TODO CH  FIND SELECTED ROW AND DELETE IT.
+  };
+  
+  /**
    * Updates the turn index to the next character.
    */
   nextTurn = () => {
     var rows           = this.state.rows;
-    var turnOwnerIndex = -1;
+    var turnOwnerFound = false;
 
-    /** Find the turn owner. */
-    for(var i = 0; i < rows.length - 1; i++){
+    if(rows.length > 0){
+      /** Find the turn owner. */
+      for(var i = 0; i < rows.length; i++){
 
-      /** Update turn owner to next character. */
-      if(rows[i].turnOwner){
-        
-        /** Clear out current turn owner. */
-        turnOwnerIndex = i;
-        rows[turnOwnerIndex].turnOwner = false;
-        
-        /** Go to index 0 since we are going out of bounds. */
-        if(turnOwnerIndex + 1 > rows.length - 1){
-          rows[0].turnOwner = true;
+        /** Update turn owner to next character. */
+        if(rows[i].turnOwner){
+          
+          /** Clear out current turn owner. */
+          turnOwnerFound = true;
+          rows[i].turnOwner = false;
+          
+          /** Go to index 0 since we are going out of bounds. */
+          if(i + 1 >= rows.length){
+            rows[0].turnOwner = true;
+          }
+          
+          /** Set the index to next character. */
+          else{
+            rows[i + 1].turnOwner = true;
+          }
+
+          //TODO CH  FIND WAY TO UPDATE ROUNDS COUNTER
+          break;
         }
-        
-        /** Set the index to next character. */
-        else{
-          rows[turnOwnerIndex + 1].turnOwner = true;
-        }
-
-        break;
       }
-    }
 
-    /** No turn owner was found, so set it the the 0 index. */
-    if(turnOwnerIndex < 0){
-      rows[0].turnOwner = true;
-    }
-
-    this.setState({rows: rows});
-  }
-
-  /**
-   * Allows the grid to be updated.
-   */
-  onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
-    this.setState(state => {
-      const rows = state.rows.slice();
-      for (let i = fromRow; i <= toRow; i++) {
-        rows[i] = { ...rows[i], ...updated };
+      /** No turn owner was found, so set it the the 0 index. */
+      if(!turnOwnerFound){
+        rows[0].turnOwner = true;
       }
-      return { rows };
-    });
+
+      this.setState({rows: rows});      
+    }
   };
-
+  
   /**
    * Updates the turn index to the previous character.
    */
   prevTurn = () => {
+    var rows           = this.state.rows;
+    var turnOwnerFound = false;
+    
+    if(rows.length > 0){
+      /** Find turn owner. */
+      for(var i = rows.length - 1; i >= 0; i--){
+        
+        /** Update turn owner index to next character. */
+        if(rows[i].turnOwner){
+          turnOwnerFound = true;
+          rows[i].turnOwner = false;
+          
+          /** If at the beginning of the list, go to the end of the list.*/
+          if(i - 1 < 0){
+            rows[rows.length - 1].turnOwner = true;
+          }
+          else{
+            rows[i - 1].turnOwner = true;
+          }
+        
+        //TODO CH  FIND WAY TO UPDATE ROUNDS COUNTER
+        break;
+        }
+      }
+      
+      /** No turn owner was found, so set it the the 0 index. */
+      if(!turnOwnerFound){
+        rows[0].turnOwner = true;
+      }
 
-  }
+      this.setState({rows: rows});      
+    }
+  };
 
   render(){
     return (
@@ -145,14 +167,33 @@ class DataGrid extends React.Component{
         <button onClick={this.addRow}>Add Character</button>
         <button onClick={this.nextTurn}>Next Turn</button>
         <button onClick={this.prevTurn}>Previous Turn</button>
-        <ReactDataGrid
-          columns={this.state.columns}
-          rowGetter={i => this.state.rows[i]}
-          rowsCount={500}
-          onGridRowsUpdated={this.onGridRowsUpdated}
-          enableCellSelect={true}
-        />
+        <DataTable headings={this.state.columns} rows={this.state.rows}/>
       </div>
+    );
+  }
+}
+
+/******************************************************************************
+* Class CharacterRow *
+* Puts together data for a character on the table.
+******************************************************************************/
+class DataTable extends React.Component {
+  
+  render() {
+    let {headings} = this.props;
+    var cell = [];
+    for (var i = 0; i < headings.length; i++){
+      let cellID = `cell${i}`
+      cell.push(<th key={cellID} id={cellID}>{headings[i]}</th>)
+    }
+    
+    return (
+      <table className="Table">
+      <tbody>
+        <tr>{cell}</tr>
+      </tbody>
+      
+      </table>
     );
   }
 }

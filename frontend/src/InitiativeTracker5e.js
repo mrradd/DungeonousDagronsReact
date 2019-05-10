@@ -67,15 +67,17 @@ class DataGrid extends React.Component{
    * Adds a row to the row list.
    */
   addRow = () => {
-    var idCounter = this.state.idCounter + 1;
+    var idCounter = this.state.idCounter;
     var rows = this.state.rows.slice();
-    rows.push({id:idCounter, name: "derp " + idCounter});
+    
+    idCounter++;
+    rows.push({id:idCounter, name: "derp " + idCounter, initiative: 0, hp: 0, ac: 0, spellDC: 0, notes: ''});
     
     this.setState({idCounter: idCounter, rows: rows, turnOwner: false});
   };
   
   /**
-   * Delete a row to the row list.
+   * Delete a row from the row list.
    */
   deleteRow = () => {
     //TODO CH  FIND SELECTED ROW AND DELETE IT.
@@ -167,7 +169,7 @@ class DataGrid extends React.Component{
         <button onClick={this.addRow}>Add Character</button>
         <button onClick={this.nextTurn}>Next Turn</button>
         <button onClick={this.prevTurn}>Previous Turn</button>
-        <DataTable headings={this.state.columns} rows={this.state.rows}/>
+        <DataTable headings={this.state.columns} data={this.state.rows}/>
       </div>
     );
   }
@@ -176,21 +178,70 @@ class DataGrid extends React.Component{
 /******************************************************************************
 * Class CharacterRow *
 * Puts together data for a character on the table.
+        <td key={idCounter++} id={idCounter}>{rows[i].initiative}</td>
+        <td key={idCounter++} id={idCounter}>{rows[i].hp}</td>
+        <td key={idCounter++} id={idCounter}>{rows[i].ac}</td>
+        <td key={idCounter++} id={idCounter}>{rows[i].spellDC}</td>
+        <td key={idCounter++} id={idCounter}>{rows[i].notes}</td>
 ******************************************************************************/
 class DataTable extends React.Component {
+  constructor(props){
+    super(props);
+    this.cellIDCounter = 0;
+  }
   
-  render() {
+  /**
+   * Renders the header row.
+   */
+  renderHeaders = () => {
+    var idCounter = this.cellIDCounter;
+    
     let {headings} = this.props;
-    var cell = [];
-    for (var i = 0; i < headings.length; i++){
-      let cellID = `cell${i}`
-      cell.push(<th key={cellID} id={cellID}>{headings[i]}</th>)
+
+    return(
+      <tr>
+        <th key={idCounter++} id={idCounter}>{headings[0]}</th>
+        <th key={idCounter++} id={idCounter}>{headings[1]}</th>
+        <th key={idCounter++} id={idCounter}>{headings[2]}</th>
+        <th key={idCounter++} id={idCounter}>{headings[3]}</th>
+        <th key={idCounter++} id={idCounter}>{headings[4]}</th>
+        <th key={idCounter++} id={idCounter}>{headings[5]}</th>
+        <th key={idCounter++} id={idCounter}>{headings[6]}</th>
+      </tr>);
+  }
+  
+  /**
+   * Assembles the row data.
+   */
+  renderRows = () => {
+    var idCounter = this.cellIDCounter;
+    
+    let {data} = this.props;
+    var rows = [];
+    
+    for(var i = 0; i < data.length; i++){
+      /** Doing it with push because otherwise it wanted me to wrap the td with an element. */
+      rows.push(
+        <tr>
+          <td key={idCounter++} id={idCounter}><input value={data[i].name}/></td>
+          <td key={idCounter++} id={idCounter}><input value={data[i].initiative}/></td>
+          <td key={idCounter++} id={idCounter}><input value={data[i].hp}/></td>
+          <td key={idCounter++} id={idCounter}><input value={data[i].ac}/></td>
+          <td key={idCounter++} id={idCounter}><input value={data[i].spellDC}/></td>
+          <td key={idCounter++} id={idCounter}><input value={data[i].notes}/></td>
+        </tr>
+      );
     }
     
+    return rows;
+  }
+  
+  render() {
     return (
       <table className="Table">
       <tbody>
-        <tr>{cell}</tr>
+        {this.renderHeaders()}
+        {this.renderRows()}
       </tbody>
       
       </table>

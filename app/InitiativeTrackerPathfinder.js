@@ -1,12 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import ReactDataGrid from 'react-data-grid';
 
 /******************************************************************************
-* Class InitiativeTracker5e *
-* Base for the Initiative Tracker for 5th Edition DnD.
+* Class InitiativeTrackerPathfinder *
+* Base for the Initiative Tracker for Pathfinder.
 ******************************************************************************/
-export class InitiativeTracker5e extends React.Component{
+export class InitiativeTrackerPathfinder extends React.Component{
   constructor(props){
     super(props);
   }
@@ -56,7 +54,8 @@ class DataGrid extends React.Component{
         'Initiative',
         'HP',
         'AC',
-        'Spell DC',
+        'CMB',
+        'CMD',
         'Notes'
       ],
       idCounter: 0
@@ -71,7 +70,7 @@ class DataGrid extends React.Component{
     var rows = this.state.rows.slice();
     
     idCounter++;
-    rows.push({id:idCounter, name: "derp " + idCounter, initiative: 0, hp: 0, ac: 0, spellDC: 0, notes: ''});
+    rows.push({id:idCounter, name: "derp " + idCounter, initiative: 0, hp: 0, ac: 0, cmb: 0, cmd: 0, notes: ''});
     
     this.setState({idCounter: idCounter, rows: rows, turnOwner: false});
   };
@@ -239,11 +238,10 @@ class DataTable extends React.Component {
   render() {
     return (
       <table className="Table">
-      <tbody>
-        {this.renderHeaders()}
-        {this.renderRows()}
-      </tbody>
-      
+        <tbody>
+          {this.renderHeaders()}
+          {this.renderRows()}
+        </tbody>
       </table>
     );
   }

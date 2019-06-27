@@ -1,5 +1,5 @@
 import React from 'react';
-import DataTable from './DataTable.js'
+import DataRow from './DataRow.js'
 
 /******************************************************************************
 * Class DataGrid *
@@ -21,19 +21,18 @@ export default class DataGrid extends React.Component{
       ],
       idCounter: 0
     };
+    this.ref = React.createRef();
   }
 
   /**
    * Adds a row to the row list.
    */
   addRow = () => {
-    var idCounter = this.state.idCounter;
     var rows = this.state.rows.slice();
+    var id = Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER));
+    rows.push(<DataRow key={id} id={id} ref={this.ref}></DataRow>);
     
-    idCounter++;
-    rows.push({id:idCounter, name: "derp " + idCounter, initiative: 0, hp: 0, ac: 0, cmb: 0, cmd: 0, notes: ''});
-    
-    this.setState({idCounter: idCounter, rows: rows, turnOwner: false});
+    this.setState({rows: rows});
   };
   
   /**
@@ -129,7 +128,20 @@ export default class DataGrid extends React.Component{
         <button onClick={this.addRow}>Add Character</button>
         <button onClick={this.nextTurn}>Next Turn</button>
         <button onClick={this.prevTurn}>Previous Turn</button>
-        <DataTable headings={this.state.columns} data={this.state.rows}/>
+        <table>
+          <tbody>
+            <tr key={0} id={0}>
+              <th>{this.state.columns[0]}</th>
+              <th>{this.state.columns[1]}</th>
+              <th>{this.state.columns[2]}</th>
+              <th>{this.state.columns[3]}</th>
+              <th>{this.state.columns[4]}</th>
+              <th>{this.state.columns[5]}</th>
+              <th>{this.state.columns[6]}</th>
+            </tr>
+            {this.state.rows}
+          </tbody>
+        </table>
       </div>
     );
   }

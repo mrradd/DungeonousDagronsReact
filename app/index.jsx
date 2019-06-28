@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import {InitiativeTrackerPathfinder} from './initiativeTrackerPathfinder/InitiativeTrackerPathfinder.js';
+import {InitiativeTrackerPathfinder} from './initiativeTrackerPathfinder/InitiativeTrackerPathfinder.jsx';
 
 class App extends React.Component{
   render(){

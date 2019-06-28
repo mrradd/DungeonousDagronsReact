@@ -15,23 +15,35 @@ export default class DataRow extends React.Component {
       ac: 0,
       cmb: 0,
       cmd: 0,
-      notes: ""
+      notes: "",
+      turnOwner: false,
+      updateTurnOwner: this.updateTurnOwner
     };
   }
-  
+
+  /**
+   * Deletes the row.
+   */
+  delete = () => {
+    this.props.deleteRow(this.props.id);
+  }
+
   /**
    * Handles the change event on the inputs and updates the appropriate state value.
    */
   handleInputChange = (event) => {
     this.setState({[event.target.name]: event.target.value});
   }
-  
-  
-  render() {
-    
+
+  updateTurnOwner = (turnOwner) => {
+    this.setState({turnOwner: turnOwner});
+  }
+
+  render() {  
     return (
       <React.Fragment>
-        <tr>
+        <tr style={{backgroundColor: this.state.turnOwner ? 'blue' : 'white'}}>
+          <td><button onClick={this.delete}>X</button></td>
           <td><input name="name"       value={this.state.name}       onChange={this.handleInputChange}/></td>
           <td><input name="initiative" value={this.state.initiative} onChange={this.handleInputChange}/></td>
           <td><input name="hp"         value={this.state.hp}         onChange={this.handleInputChange}/></td>

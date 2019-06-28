@@ -1,5 +1,5 @@
 import React from 'react';
-import DataRow from './DataRow.js'
+import DataRow from './DataRow.jsx';
 
 /******************************************************************************
 * Class DataGrid *
@@ -11,6 +11,7 @@ export default class DataGrid extends React.Component{
     this.state = {
       rows: [],
       columns: [
+        '',
         'Name',
         'Initiative',
         'HP',
@@ -18,10 +19,18 @@ export default class DataGrid extends React.Component{
         'CMB',
         'CMD',
         'Notes'
-      ],
-      idCounter: 0
+      ]
     };
-    this.ref = React.createRef();
+
+    this.rowRefs = []
+  }
+
+  /**
+   * Adds a referencs to the ref list.
+   * @param  ref  Reference to add.
+   */
+  addRef = (ref) => {
+    this.rowRefs.push(ref);
   }
 
   /**
@@ -30,44 +39,53 @@ export default class DataGrid extends React.Component{
   addRow = () => {
     var rows = this.state.rows.slice();
     var id = Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER));
-    rows.push(<DataRow key={id} id={id} ref={this.ref}></DataRow>);
-    
+    var row = <DataRow key={id} id={id} ref={this.addRef} deleteRow={this.deleteRow}></DataRow>;
+    rows.push(row);
     this.setState({rows: rows});
   };
   
   /**
-   * Delete a row from the row list.
+   * Delete a row from the row list for given id.
+   * @param  id  ID of row to delete.
    */
-  deleteRow = () => {
-    //TODO CH  FIND SELECTED ROW AND DELETE IT.
+  deleteRow = (id) => {
+    var rows = this.state.rows.slice();
+    rows = rows.filter(function(row){return row.props.id != id; });
+
+    //TODO CH  FOR SOME REASON EVEN THOUGH AN ELEMENT IS REMOVED FROM ROWREFS
+    //AND ITS LENGTH IS 1 LESS HERE; LATER USE SHOWS IT HAS ONE MORE ELEMENT THAN IT SHOULD
+    //AND THAT ELEMENT IS ALWAYS NULL.
+    this.rowRefs = this.rowRefs.filter(function(row){return row.props.id != id; });
+
+    this.setState({rows: rows});
   };
-  
+
   /**
    * Updates the turn index to the next character.
    */
   nextTurn = () => {
-    var rows           = this.state.rows;
     var turnOwnerFound = false;
 
-    if(rows.length > 0){
+    if(this.rowRefs.length > 0){
       /** Find the turn owner. */
-      for(var i = 0; i < rows.length; i++){
+      for(var i = 0; i < this.rowRefs.length; i++){
 
         /** Update turn owner to next character. */
-        if(rows[i].turnOwner){
+        if(this.rowRefs[i] && this.rowRefs[i].state.turnOwner){
           
           /** Clear out current turn owner. */
           turnOwnerFound = true;
-          rows[i].turnOwner = false;
+          this.rowRefs[i].state.updateTurnOwner(false);
           
           /** Go to index 0 since we are going out of bounds. */
-          if(i + 1 >= rows.length){
-            rows[0].turnOwner = true;
+          //TODO CH ACCOMODATING THE STUPID NULL ELEMENT THAT KEEPS APPEARING AFTER DELETE.
+          if(i + 1 >= this.rowRefs.length || !this.rowRefs[i+1]){
+            this.rowRefs[0].state.updateTurnOwner(true);
           }
           
           /** Set the index to next character. */
-          else{
-            rows[i + 1].turnOwner = true;
+          else if (this.rowRefs[i + 1]){
+            this.rowRefs[i + 1].state.updateTurnOwner(true);
           }
 
           //TODO CH  FIND WAY TO UPDATE ROUNDS COUNTER
@@ -77,10 +95,8 @@ export default class DataGrid extends React.Component{
 
       /** No turn owner was found, so set it the the 0 index. */
       if(!turnOwnerFound){
-        rows[0].turnOwner = true;
+        this.rowRefs[0].state.updateTurnOwner(true);
       }
-
-      this.setState({rows: rows});      
     }
   };
   
@@ -88,24 +104,29 @@ export default class DataGrid extends React.Component{
    * Updates the turn index to the previous character.
    */
   prevTurn = () => {
-    var rows           = this.state.rows;
     var turnOwnerFound = false;
     
-    if(rows.length > 0){
+    if(this.rowRefs.length > 0){
       /** Find turn owner. */
-      for(var i = rows.length - 1; i >= 0; i--){
+      for(var i = this.rowRefs.length - 1; i >= 0; i--){
         
         /** Update turn owner index to next character. */
-        if(rows[i].turnOwner){
+        if(this.rowRefs[i] && this.rowRefs[i].state.turnOwner){
           turnOwnerFound = true;
-          rows[i].turnOwner = false;
+          this.rowRefs[i].state.updateTurnOwner(false);
           
           /** If at the beginning of the list, go to the end of the list.*/
           if(i - 1 < 0){
-            rows[rows.length - 1].turnOwner = true;
+            if(this.rowRefs[this.rowRefs.length - 1]){
+              this.rowRefs[this.rowRefs.length - 1].state.updateTurnOwner(true);
+            }
+            else{
+            //TODO CH ACCOMODATING THE STUPID NULL ELEMENT THAT KEEPS APPEARING AFTER DELETE.
+            this.rowRefs[this.rowRefs.length - 2].state.updateTurnOwner(true);
+            }
           }
           else{
-            rows[i - 1].turnOwner = true;
+            this.rowRefs[i - 1].state.updateTurnOwner(true);
           }
         
         //TODO CH  FIND WAY TO UPDATE ROUNDS COUNTER
@@ -115,10 +136,8 @@ export default class DataGrid extends React.Component{
       
       /** No turn owner was found, so set it the the 0 index. */
       if(!turnOwnerFound){
-        rows[0].turnOwner = true;
+        this.rowRefs[0].state.updateTurnOwner(true);
       }
-
-      this.setState({rows: rows});      
     }
   };
 
@@ -138,6 +157,7 @@ export default class DataGrid extends React.Component{
               <th>{this.state.columns[4]}</th>
               <th>{this.state.columns[5]}</th>
               <th>{this.state.columns[6]}</th>
+              <th>{this.state.columns[7]}</th>
             </tr>
             {this.state.rows}
           </tbody>

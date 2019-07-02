@@ -4,6 +4,11 @@ import DataRow from './DataRow.jsx';
 /******************************************************************************
 * Class DataGrid *
 * Displays a list of the characters and some info about them.
+*
+* props
+* incrementTurn()
+* decrementTurn()
+* updateName()
 ******************************************************************************/
 export default class DataGrid extends React.Component{
   constructor(props){
@@ -19,7 +24,8 @@ export default class DataGrid extends React.Component{
         'CMB',
         'CMD',
         'Notes'
-      ]
+      ],
+      getTurnOwnerName: this.getTurnOwnerName
     };
 
     this.rowRefs = []
@@ -28,9 +34,14 @@ export default class DataGrid extends React.Component{
   /**
    * Adds a referencs to the ref list.
    * @param  ref  Reference to add.
+   * 
+   * NOTE: this actually gets called even on deletion. Who'd a thunk; probably has
+   * to do with the fact that this function is in 'ref'.
    */
   addRef = (ref) => {
-    this.rowRefs.push(ref);
+    if(ref){
+      this.rowRefs.push(ref);
+    }
   }
 
   /**
@@ -50,15 +61,27 @@ export default class DataGrid extends React.Component{
    */
   deleteRow = (id) => {
     var rows = this.state.rows.slice();
+    var rowRefs = this.rowRefs.slice();
+
     rows = rows.filter(function(row){return row.props.id != id; });
 
-    //TODO CH  FOR SOME REASON EVEN THOUGH AN ELEMENT IS REMOVED FROM ROWREFS
-    //AND ITS LENGTH IS 1 LESS HERE; LATER USE SHOWS IT HAS ONE MORE ELEMENT THAN IT SHOULD
-    //AND THAT ELEMENT IS ALWAYS NULL.
-    this.rowRefs = this.rowRefs.filter(function(row){return row.props.id != id; });
+    this.rowRefs = rowRefs.filter(function(row){return row.props.id != id; });
 
     this.setState({rows: rows});
   };
+
+  /**
+   * Updates the current turnowner and the the turn owner's name.
+   * @param  row      Data row of the turn owner.
+   * @param  isOwner  Is this the owner of the turn.
+   */
+  updateTurnOwner = (row, isOwner) => {
+    row.state.updateTurnOwner(isOwner);
+
+    if(isOwner){
+      this.props.updateName(row.state.name);
+    }
+  }
 
   /**
    * Updates the turn index to the next character.
@@ -75,27 +98,25 @@ export default class DataGrid extends React.Component{
           
           /** Clear out current turn owner. */
           turnOwnerFound = true;
-          this.rowRefs[i].state.updateTurnOwner(false);
+          this.updateTurnOwner(this.rowRefs[i], false);
           
           /** Go to index 0 since we are going out of bounds. */
-          //TODO CH ACCOMODATING THE STUPID NULL ELEMENT THAT KEEPS APPEARING AFTER DELETE.
-          if(i + 1 >= this.rowRefs.length || !this.rowRefs[i+1]){
-            this.rowRefs[0].state.updateTurnOwner(true);
+          if(i + 1 >= this.rowRefs.length){
+            this.props.incrementRound();
+            this.updateTurnOwner(this.rowRefs[0], true);
           }
           
           /** Set the index to next character. */
           else if (this.rowRefs[i + 1]){
-            this.rowRefs[i + 1].state.updateTurnOwner(true);
+            this.updateTurnOwner(this.rowRefs[i + 1], true);
           }
-
-          //TODO CH  FIND WAY TO UPDATE ROUNDS COUNTER
           break;
         }
       }
 
       /** No turn owner was found, so set it the the 0 index. */
       if(!turnOwnerFound){
-        this.rowRefs[0].state.updateTurnOwner(true);
+        this.updateTurnOwner(this.rowRefs[0], true);
       }
     }
   };
@@ -113,30 +134,23 @@ export default class DataGrid extends React.Component{
         /** Update turn owner index to next character. */
         if(this.rowRefs[i] && this.rowRefs[i].state.turnOwner){
           turnOwnerFound = true;
-          this.rowRefs[i].state.updateTurnOwner(false);
+          this.updateTurnOwner(this.rowRefs[i], false);
           
           /** If at the beginning of the list, go to the end of the list.*/
           if(i - 1 < 0){
-            if(this.rowRefs[this.rowRefs.length - 1]){
-              this.rowRefs[this.rowRefs.length - 1].state.updateTurnOwner(true);
-            }
-            else{
-            //TODO CH ACCOMODATING THE STUPID NULL ELEMENT THAT KEEPS APPEARING AFTER DELETE.
-            this.rowRefs[this.rowRefs.length - 2].state.updateTurnOwner(true);
-            }
+            this.updateTurnOwner(this.rowRefs[this.rowRefs.length - 1], true);
+            this.props.decrementRound();
           }
           else{
-            this.rowRefs[i - 1].state.updateTurnOwner(true);
+            this.updateTurnOwner(this.rowRefs[i - 1], true);
           }
-        
-        //TODO CH  FIND WAY TO UPDATE ROUNDS COUNTER
         break;
         }
       }
       
       /** No turn owner was found, so set it the the 0 index. */
       if(!turnOwnerFound){
-        this.rowRefs[0].state.updateTurnOwner(true);
+        this.updateTurnOwner(this.rowRefs[0], true);
       }
     }
   };

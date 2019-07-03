@@ -10,6 +10,8 @@ export class InitiativeTrackerPathfinder extends React.Component{
     super(props);
     this.state = {
       round: 1,
+      seconds: '00',
+      minutes: '00',
       name: ''
     }
 
@@ -29,10 +31,17 @@ export class InitiativeTrackerPathfinder extends React.Component{
     this.setState({round: r});
   }
 
-  /** Increments the current round. Makes sure it doesn't go negative */
+  /** Increments the current round and clock. */
   incrementRound = () => {
     var r = this.state.round;
     r++;
+
+    var seconds = ((r * 6) % 60);
+    var minutes = (Math.floor(r / 10));
+    
+    this.state.seconds = ("0" + seconds).slice(-2);
+    this.state.minutes = ("0" + minutes).slice(-2);
+
     this.setState({round: r});
   }
 
@@ -44,12 +53,10 @@ export class InitiativeTrackerPathfinder extends React.Component{
   render(){
     return (
       <div>
-        <h1>Test</h1>
+        <h1>Initiative Tracker - Pathfinder</h1>
         <div>
-          <h3>This is where the clock goes.</h3>
-        </div>
-        <div>
-          <h3>Round: {this.state.round} {this.state.name.length > 0 ? '- ' + this.state.name : ''}</h3>
+          <h3>{this.state.minutes} : {this.state.seconds} - Round: {this.state.round}</h3>
+          <h3>{this.state.name.length > 0 ? this.state.name : "No one"}'s Turn</h3>
         </div>
         <DataGrid round={this.state.round} updateName={this.updateName} incrementRound={this.incrementRound} decrementRound={this.decrementRound}/>
       </div>

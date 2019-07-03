@@ -15,7 +15,9 @@ export default class DataGrid extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      rows: [],
+      rows: [
+        <DataRow key={0} id={0} ref={this.addRef} deleteRow={this.deleteRow} updateName={this.updateName}></DataRow>
+      ],
       columns: [
         '',
         'Name',
@@ -56,6 +58,15 @@ export default class DataGrid extends React.Component{
     this.setState({rows: rows});
   };
   
+  componentDidUpdate(){
+
+    /** Make sure there is always a row, and to update the name of turn owner. */
+    if(this.state.rows.length <= 0){
+      this.updateName('');
+      this.addRow();
+    }
+  }
+
   /**
    * Delete a row from the row list for given id.
    * @param  id  ID of row to delete.
@@ -71,7 +82,9 @@ export default class DataGrid extends React.Component{
     this.setState({rows: rows});
   };
 
-  /** Calls the tracker's update name function. */
+  /**
+   * Calls the tracker's update name function.
+   */
   updateName = (name) => {
     this.props.updateName(name);
   }
@@ -128,6 +141,34 @@ export default class DataGrid extends React.Component{
   };
   
   /**
+   * Orders all rows by initiative. 
+   */
+  orderByInitiative = () => {
+    var rows = this.state.rows.slice();
+    //TODO CH  HOW GET ACCESS TO INITIATIVE FROM ROW?
+    // var swapped = false;
+      
+    // do
+    //   {
+    //   swapped = false;
+      
+    //   for(var i = 0; i < rows.length - 1; i++)
+    //     {
+    //     if(Number(rows[i].init) < Number(mThis.characterList[i+1].init))
+    //       {
+    //       var temp = mThis.characterList[i];
+          
+    //       mThis.characterList[i]     = mThis.characterList[i + 1];
+    //       mThis.characterList[i + 1] = temp;
+          
+    //       swapped = true;
+    //       }
+    //     }
+    //   }
+    // while(swapped);
+  }
+
+  /**
    * Updates the turn index to the previous character.
    */
   prevTurn = () => {
@@ -147,10 +188,9 @@ export default class DataGrid extends React.Component{
           turnOwnerFound = true;
           this.updateTurnOwner(this.rowRefs[i], false);
           
-          /** If at the beginning of the list, go to the end of the list.*/
+          /** If at the beginning of the list, stop.*/
           if(i - 1 < 0){
-            this.updateTurnOwner(this.rowRefs[this.rowRefs.length - 1], true);
-            this.props.decrementRound();
+            this.updateTurnOwner(this.rowRefs[0], true);
           }
           else{
             this.updateTurnOwner(this.rowRefs[i - 1], true);
@@ -172,6 +212,7 @@ export default class DataGrid extends React.Component{
         <button onClick={this.addRow}>Add Character</button>
         <button onClick={this.nextTurn}>Next Turn</button>
         <button onClick={this.prevTurn}>Previous Turn</button>
+        <button onClick={this.orderByInitiative}>Order by Initiative</button>
         <table>
           <tbody>
             <tr key={0} id={0}>

@@ -1,7 +1,5 @@
 import React from 'react';
-import Clock from './Clock.jsx';
 import DataGrid from './Datagrid.jsx';
-import TurnIndicator from './TurnIndicator.jsx';
 
 /******************************************************************************
 * Class InitiativeTrackerPathfinder *

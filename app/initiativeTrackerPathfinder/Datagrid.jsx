@@ -4,7 +4,6 @@ import DataRow from './DataRow.jsx';
 /******************************************************************************
 * Class DataGrid *
 * Displays a list of the characters and some info about them.
-*
 * props
 * incrementTurn()
 * decrementTurn()
@@ -144,8 +143,14 @@ export default class DataGrid extends React.Component{
    * Orders all rows by initiative. 
    */
   orderByInitiative = () => {
+    
     var rows = this.state.rows.slice();
     //TODO CH  HOW GET ACCESS TO INITIATIVE FROM ROW?
+
+    //TODO CH  SOLUTION? RATHER THAN EACH DATAROW HAVING ITS OWN STATE, MAINTAIN A LIST OF ROWDATA OBJECTS IN THE DATAGRID
+    //STATE AND MAP THEM TO DATAROWS PASSING THE DATAGRID STATE ROWDATA IN AS PROPS. THIS SHOULD HOPEFULLY MAKE
+    //THINGS A BIT EASIER AND A BIT LESS MESSY.
+    
     // var swapped = false;
       
     // do

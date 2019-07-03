@@ -49,9 +49,9 @@ export class InitiativeTrackerPathfinder extends React.Component{
           <h3>This is where the clock goes.</h3>
         </div>
         <div>
-          <h3>Round: {this.state.round} - {this.state.name}</h3>
+          <h3>Round: {this.state.round} {this.state.name.length > 0 ? '- ' + this.state.name : ''}</h3>
         </div>
-        <DataGrid updateName={this.updateName} incrementRound={this.incrementRound} decrementRound={this.decrementRound}/>
+        <DataGrid round={this.state.round} updateName={this.updateName} incrementRound={this.incrementRound} decrementRound={this.decrementRound}/>
       </div>
     );
   }

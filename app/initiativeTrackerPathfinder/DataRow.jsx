@@ -3,19 +3,22 @@ import React from 'react';
 /******************************************************************************
 * Class DataRow *
 * Data for a single row.
+*
+* props
+* updateName()
 ******************************************************************************/
 export default class DataRow extends React.Component {
   constructor(props){
     super(props);
     this.cellIDCounter = 0;
     this.state = {
-      name: "",
+      name: '',
       initiative: 0,
       hp: 0,
       ac: 0,
       cmb: 0,
       cmd: 0,
-      notes: "",
+      notes: '',
       turnOwner: false,
       updateTurnOwner: this.updateTurnOwner
     };
@@ -32,6 +35,11 @@ export default class DataRow extends React.Component {
    * Handles the change event on the inputs and updates the appropriate state value.
    */
   handleInputChange = (event) => {
+    /** Update the name. */
+    if(this.state.turnOwner && event.target.name == 'name'){
+      this.props.updateName(event.target.value);
+    }
+
     this.setState({[event.target.name]: event.target.value});
   }
 

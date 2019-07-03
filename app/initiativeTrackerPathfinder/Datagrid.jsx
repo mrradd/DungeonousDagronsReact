@@ -9,6 +9,7 @@ import DataRow from './DataRow.jsx';
 * incrementTurn()
 * decrementTurn()
 * updateName()
+* round
 ******************************************************************************/
 export default class DataGrid extends React.Component{
   constructor(props){
@@ -50,7 +51,7 @@ export default class DataGrid extends React.Component{
   addRow = () => {
     var rows = this.state.rows.slice();
     var id = Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER));
-    var row = <DataRow key={id} id={id} ref={this.addRef} deleteRow={this.deleteRow}></DataRow>;
+    var row = <DataRow key={id} id={id} ref={this.addRef} deleteRow={this.deleteRow} updateName={this.updateName}></DataRow>;
     rows.push(row);
     this.setState({rows: rows});
   };
@@ -69,6 +70,11 @@ export default class DataGrid extends React.Component{
 
     this.setState({rows: rows});
   };
+
+  /** Calls the tracker's update name function. */
+  updateName = (name) => {
+    this.props.updateName(name);
+  }
 
   /**
    * Updates the current turnowner and the the turn owner's name.
@@ -131,6 +137,11 @@ export default class DataGrid extends React.Component{
       /** Find turn owner. */
       for(var i = this.rowRefs.length - 1; i >= 0; i--){
         
+        /** We do not want to loop around if we are on round 1 and at the beginning of the list. */
+        if(i - 1 < 0 && this.props.round <= 1){
+          break;
+        }
+
         /** Update turn owner index to next character. */
         if(this.rowRefs[i] && this.rowRefs[i].state.turnOwner){
           turnOwnerFound = true;

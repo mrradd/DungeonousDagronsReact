@@ -4,7 +4,6 @@ import DataRow from './DataRow.jsx';
 /******************************************************************************
 * Class DataGrid *
 * Displays a list of the characters and some info about them.
-*
 * props
 * incrementTurn()
 * decrementTurn()
@@ -224,9 +223,8 @@ export default class DataGrid extends React.Component{
    * Orders all rows by initiative. 
    */
   orderByInitiative = () => {
-    var rows = this.state.rows.slice();
-    var swapped = false;
-      
+    var rows    = this.state.rows.slice();
+    
     do
       {
       swapped = false;

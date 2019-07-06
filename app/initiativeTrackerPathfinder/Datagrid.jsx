@@ -109,8 +109,13 @@ export default class DataGrid extends React.Component{
     for(var i = 0; i < rows.length; i++){
       if(rows[i].id == id){
         /** Make sure value is an int. */
-        if(name != 'name' && name != 'notes' && /^-?\d*$/.test(value)){
-          value = Number(value);
+        if(name != 'name' && name != 'notes'){
+          if(/^-?\d*$/.test(value)){
+            value = Number(value);
+          }
+          else{
+            return;
+          }  
         }
 
         /** Update the name. */
@@ -224,7 +229,8 @@ export default class DataGrid extends React.Component{
    */
   orderByInitiative = () => {
     var rows    = this.state.rows.slice();
-    
+    var swapped = false;
+      
     do
       {
       swapped = false;

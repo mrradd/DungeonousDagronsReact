@@ -58,17 +58,31 @@ export default class DataRow extends React.Component {
       <React.Fragment>
         <tr style={{backgroundColor: this.props.turnOwner ? 'blue' : 'white'}}>
           <td>
-            <button onClick={this.deleteRow}>X</button>
-            <button onClick={this.moveUp}>^</button>
-            <button onClick={this.moveDown}>V</button>
+            <button onClick={this.deleteRow} ><span className="material-icons">face</span> </button>
+            <button onClick={this.moveUp}> <span></span> </button>
+            <button onClick={this.moveDown}> <span></span> </button>
           </td>
-          <td><input name="name"       value={this.props.name}       onChange={this.handleInputChange}/></td>
-          <td><input name="initiative" value={this.props.initiative} onChange={this.handleInputChange}/></td>
-          <td><input name="hp"         value={this.props.hp}         onChange={this.handleInputChange}/></td>
-          <td><input name="ac"         value={this.props.ac}         onChange={this.handleInputChange}/></td>
-          <td><input name="cmb"        value={this.props.cmb}        onChange={this.handleInputChange}/></td>
-          <td><input name="cmd"        value={this.props.cmd}        onChange={this.handleInputChange}/></td>
-          <td><input name="notes"      value={this.props.notes}      onChange={this.handleInputChange}/></td>
+          <td>
+            <input name="name" value={this.props.name} onChange={this.handleInputChange}/>
+          </td>
+          <td >
+            <input name="initiative" value={this.props.initiative} onChange={this.handleInputChange}/>
+          </td>
+          <td>
+            <input name="hp" value={this.props.hp} onChange={this.handleInputChange}/>
+          </td>
+          <td>
+            <input name="ac" value={this.props.ac} onChange={this.handleInputChange}/>
+          </td>
+          <td>
+            <input name="cmb" value={this.props.cmb} onChange={this.handleInputChange}/>
+          </td>
+          <td>
+            <input name="cmd" value={this.props.cmd} onChange={this.handleInputChange}/>
+          </td>
+          <td>
+            <input name="notes" value={this.props.notes} onChange={this.handleInputChange}/>
+          </td>
         </tr>
       </React.Fragment>
     );

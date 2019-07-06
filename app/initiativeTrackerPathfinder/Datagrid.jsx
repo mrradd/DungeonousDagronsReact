@@ -14,19 +14,17 @@ export default class DataGrid extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      rows: [
-        {
-          id: 0,
-          name: '',
-          initiative: 0,
-          hp: 0,
-          ac: 0,
-          cmb: 0,
-          cmd: 0,
-          notes: '',
-          turnOwner: false
-        }
-      ],
+      rows: [{
+        id: 0,
+        name: '',
+        initiative: 0,
+        hp: 0,
+        ac: 0,
+        cmb: 0,
+        cmd: 0,
+        notes: '',
+        turnOwner: false
+      }],
       columns: [
         '',
         'Name',
@@ -77,7 +75,7 @@ export default class DataGrid extends React.Component{
 
     this.setState({rows: rows});
   };
-  
+
   componentDidUpdate(){
     /** Make sure there is always a row, and to update the name of turn owner. */
     if(this.state.rows.length <= 0){
@@ -135,6 +133,10 @@ export default class DataGrid extends React.Component{
    * @param  id  ID of row to move.
    */
   moveDown = (id) => {
+    if(this.state.rows.length <= 1){
+      return;
+    }
+
     var rows  = this.state.rows.slice();
     var index = 0;
 
@@ -161,6 +163,10 @@ export default class DataGrid extends React.Component{
    * @param  id  ID of row to move.
    */
   moveUp = (id) => {
+    if(this.state.rows.length <= 1){
+      return;
+    }
+
     var rows  = this.state.rows.slice();
     var index = 0;
     
@@ -297,7 +303,7 @@ export default class DataGrid extends React.Component{
   /**
    * Maps row objects to elements.
    */
-  renderRows(){
+  renderRows = () =>{
     var rows = this.state.rows.map((row) => {
       return (
         <DataRow

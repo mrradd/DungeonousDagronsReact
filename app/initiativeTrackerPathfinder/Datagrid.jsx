@@ -16,7 +16,17 @@ export default class DataGrid extends React.Component{
     super(props);
     this.state = {
       rows: [
-        <DataRow key={0} id={0} ref={this.addRef} deleteRow={this.deleteRow} updateName={this.updateName}></DataRow>
+        {
+          id: 0,
+          name: '',
+          initiative: 0,
+          hp: 0,
+          ac: 0,
+          cmb: 0,
+          cmd: 0,
+          notes: '',
+          turnOwner: false
+        }
       ],
       columns: [
         '',
@@ -52,14 +62,24 @@ export default class DataGrid extends React.Component{
    */
   addRow = () => {
     var rows = this.state.rows.slice();
-    var id = Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER));
-    var row = <DataRow key={id} id={id} ref={this.addRef} deleteRow={this.deleteRow} updateName={this.updateName}></DataRow>;
+    var row = {
+      id: Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER)),
+      name: '',
+      initiative: 0,
+      hp: 0,
+      ac: 0,
+      cmb: 0,
+      cmd: 0,
+      notes: '',
+      turnOwner: false
+    };
+
     rows.push(row);
+
     this.setState({rows: rows});
   };
   
   componentDidUpdate(){
-
     /** Make sure there is always a row, and to update the name of turn owner. */
     if(this.state.rows.length <= 0){
       this.updateName('');
@@ -73,14 +93,231 @@ export default class DataGrid extends React.Component{
    */
   deleteRow = (id) => {
     var rows = this.state.rows.slice();
-    var rowRefs = this.rowRefs.slice();
+    rows     = rows.filter(function(row){return row.id != id; });
+    this.setState({rows: rows});
+  };
 
-    rows = rows.filter(function(row){return row.props.id != id; });
+  /**
+   * Handles the change event on the inputs and updates the appropriate row.
+   * @param  id     ID of row to change.
+   * @param  event  Event from input being changed.
+   */
+  handleInputChange = (id, event) => {
+    var rows  = this.state.rows.slice();
+    var value = event.target.value;
+    var name  = event.target.name;
 
-    this.rowRefs = rowRefs.filter(function(row){return row.props.id != id; });
+    for(var i = 0; i < rows.length; i++){
+      if(rows[i].id == id){
+        /** Make sure value is an int. */
+        if(name != 'name' && name != 'notes' && /^-?\d*$/.test(value)){
+          value = Number(value);
+        }
+
+        /** Update the name. */
+        if(rows[i].turnOwner && name == 'name'){
+          this.updateName(value);
+        }
+
+        rows[i][name] = value;
+        this.setState({rows: rows});
+        break;
+      }
+    }
+  }
+
+  /**
+   * Moves row down one.
+   * @param  id  ID of row to move.
+   */
+  moveDown = (id) => {
+    var rows  = this.state.rows.slice();
+    var index = 0;
+
+    for(var i = 0; i < rows.length; i++){
+      if(rows[i].id == id){
+        if(i + 1 > rows.length){
+          return;
+        }
+
+        index = i;
+        break;
+      }
+    }
+
+    var temp        = rows[index + 1];
+    rows[index + 1] = rows[index];
+    rows[index]     = temp;
+
+    this.setState({rows: rows});
+  }
+
+  /**
+   * Moves row up one.
+   * @param  id  ID of row to move.
+   */
+  moveUp = (id) => {
+    var rows  = this.state.rows.slice();
+    var index = 0;
+    
+    for(var i = 0; i < rows.length; i++){
+      if(rows[i].id == id){
+        if(i - 1 < 0){
+          return;
+        }
+
+        index = i;
+        break;
+      }
+    }
+
+    var temp        = rows[index - 1];
+    rows[index - 1] = rows[index];
+    rows[index]     = temp;
+
+    this.setState({rows: rows});
+  }
+
+  /**
+   * Updates the turn index to the next character.
+   */
+  nextTurn = () => {
+    var rows = this.state.rows.slice();
+
+    var turnOwnerFound = false;
+
+    if(rows.length > 0){
+      /** Find the turn owner. */
+      for(var i = 0; i < rows.length; i++){
+
+        /** Update turn owner to next character. */
+        if(rows[i] && rows[i].turnOwner){
+          
+          /** Clear out current turn owner. */
+          turnOwnerFound = true;
+          this.updateTurnOwner(rows[i], false);
+          
+          /** Go to index 0 since we are going out of bounds. */
+          if(i + 1 >= rows.length){
+            this.props.incrementRound();
+            this.updateTurnOwner(rows[0], true);
+          }
+          
+          /** Set the index to next character. */
+          else if (rows[i + 1]){
+            this.updateTurnOwner(rows[i + 1], true);
+          }
+          break;
+        }
+      }
+
+      /** No turn owner was found, so set it the the 0 index. */
+      if(!turnOwnerFound){
+        this.updateTurnOwner(rows[0], true);
+      }
+    }
+
+    this.setState({rows:rows});
+  };
+  
+  /**
+   * Orders all rows by initiative. 
+   */
+  orderByInitiative = () => {
+    var rows = this.state.rows.slice();
+    var swapped = false;
+      
+    do
+      {
+      swapped = false;
+      
+      for(var i = 0; i < rows.length - 1; i++)
+        {
+        if(rows[i].initiative > rows[i+1].initiative)
+          {
+          var temp    = rows[i];
+          rows[i]     = rows[i + 1];
+          rows[i + 1] = temp;
+          swapped     = true;
+          }
+        }
+      }
+    while(swapped);
+
+    this.setState({rows: rows});
+  }
+
+  /**
+   * Updates the turn index to the previous character.
+   */
+  prevTurn = () => {
+    var rows = this.state.rows.slice();
+
+    var turnOwnerFound = false;
+    
+    if(rows.length > 0){
+      /** Find turn owner. */
+      for(var i = rows.length - 1; i >= 0; i--){
+        
+        /** We do not want to loop around if we are on round 1 and at the beginning of the list. */
+        if(i - 1 < 0 && this.props.round <= 1){
+          break;
+        }
+
+        /** Update turn owner index to next character. */
+        if(rows[i] && rows[i].turnOwner){
+          turnOwnerFound = true;
+          this.updateTurnOwner(rows[i], false);
+          
+          /** If at the beginning of the list, stop.*/
+          if(i - 1 < 0){
+            this.updateTurnOwner(rows[0], true);
+          }
+          else{
+            this.updateTurnOwner(rows[i - 1], true);
+          }
+
+        break;
+        }
+      }
+      
+      /** No turn owner was found, so set it the the 0 index. */
+      if(!turnOwnerFound){
+        this.updateTurnOwner(rows[0], true);
+      }
+    }
 
     this.setState({rows: rows});
   };
+
+  /**
+   * Maps row objects to elements.
+   */
+  renderRows(){
+    var rows = this.state.rows.map((row) => {
+      return (
+        <DataRow
+          key={row.id}
+          id={row.id}
+          name={row.name}
+          initiative={row.initiative}
+          hp={row.hp}
+          ac={row.ac}
+          cmb={row.cmb}
+          cmd={row.cmd}
+          notes={row.notes}
+          turnOwner={row.turnOwner}
+          handleInputChange={this.handleInputChange}
+          deleteRow={this.deleteRow}
+          updateName={this.updateName}
+          moveDown={this.moveDown}
+          moveUp={this.moveUp}
+          >
+        </DataRow>);
+    });
+    
+    return rows;
+  }
 
   /**
    * Calls the tracker's update name function.
@@ -90,121 +327,22 @@ export default class DataGrid extends React.Component{
   }
 
   /**
-   * Updates the current turnowner and the the turn owner's name.
-   * @param  row      Data row of the turn owner.
+   * Updates the turn owner's name.
+   * @param  id       Row id.
    * @param  isOwner  Is this the owner of the turn.
    */
   updateTurnOwner = (row, isOwner) => {
-    row.state.updateTurnOwner(isOwner);
-
-    if(isOwner){
-      this.props.updateName(row.state.name);
-    }
-  }
-
-  /**
-   * Updates the turn index to the next character.
-   */
-  nextTurn = () => {
-    var turnOwnerFound = false;
-
-    if(this.rowRefs.length > 0){
-      /** Find the turn owner. */
-      for(var i = 0; i < this.rowRefs.length; i++){
-
-        /** Update turn owner to next character. */
-        if(this.rowRefs[i] && this.rowRefs[i].state.turnOwner){
-          
-          /** Clear out current turn owner. */
-          turnOwnerFound = true;
-          this.updateTurnOwner(this.rowRefs[i], false);
-          
-          /** Go to index 0 since we are going out of bounds. */
-          if(i + 1 >= this.rowRefs.length){
-            this.props.incrementRound();
-            this.updateTurnOwner(this.rowRefs[0], true);
-          }
-          
-          /** Set the index to next character. */
-          else if (this.rowRefs[i + 1]){
-            this.updateTurnOwner(this.rowRefs[i + 1], true);
-          }
-          break;
-        }
-      }
-
-      /** No turn owner was found, so set it the the 0 index. */
-      if(!turnOwnerFound){
-        this.updateTurnOwner(this.rowRefs[0], true);
-      }
-    }
-  };
-  
-  /**
-   * Orders all rows by initiative. 
-   */
-  orderByInitiative = () => {
     var rows = this.state.rows.slice();
-    //TODO CH  HOW GET ACCESS TO INITIATIVE FROM ROW?
-    // var swapped = false;
-      
-    // do
-    //   {
-    //   swapped = false;
-      
-    //   for(var i = 0; i < rows.length - 1; i++)
-    //     {
-    //     if(Number(rows[i].init) < Number(mThis.characterList[i+1].init))
-    //       {
-    //       var temp = mThis.characterList[i];
-          
-    //       mThis.characterList[i]     = mThis.characterList[i + 1];
-    //       mThis.characterList[i + 1] = temp;
-          
-    //       swapped = true;
-    //       }
-    //     }
-    //   }
-    // while(swapped);
-  }
+    var index = rows.indexOf(row);
 
-  /**
-   * Updates the turn index to the previous character.
-   */
-  prevTurn = () => {
-    var turnOwnerFound = false;
+    rows[index].turnOwner = isOwner;
     
-    if(this.rowRefs.length > 0){
-      /** Find turn owner. */
-      for(var i = this.rowRefs.length - 1; i >= 0; i--){
-        
-        /** We do not want to loop around if we are on round 1 and at the beginning of the list. */
-        if(i - 1 < 0 && this.props.round <= 1){
-          break;
-        }
-
-        /** Update turn owner index to next character. */
-        if(this.rowRefs[i] && this.rowRefs[i].state.turnOwner){
-          turnOwnerFound = true;
-          this.updateTurnOwner(this.rowRefs[i], false);
-          
-          /** If at the beginning of the list, stop.*/
-          if(i - 1 < 0){
-            this.updateTurnOwner(this.rowRefs[0], true);
-          }
-          else{
-            this.updateTurnOwner(this.rowRefs[i - 1], true);
-          }
-        break;
-        }
-      }
-      
-      /** No turn owner was found, so set it the the 0 index. */
-      if(!turnOwnerFound){
-        this.updateTurnOwner(this.rowRefs[0], true);
-      }
+    if(isOwner){
+      this.props.updateName(rows[index].name);
     }
-  };
+    
+    this.setState({rows: rows});
+  }
 
   render(){
     return (
@@ -225,7 +363,7 @@ export default class DataGrid extends React.Component{
               <th>{this.state.columns[6]}</th>
               <th>{this.state.columns[7]}</th>
             </tr>
-            {this.state.rows}
+            {this.renderRows()}
           </tbody>
         </table>
       </div>

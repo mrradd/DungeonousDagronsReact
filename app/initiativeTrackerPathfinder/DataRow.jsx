@@ -2,63 +2,73 @@ import React from 'react';
 
 /******************************************************************************
 * Class DataRow *
-* Data for a single row.
+* Data for a single row. Also has buttons to delete row, and move it up and
+* down.
 *
 * props
-* updateName()
+* deleteRow()
+* handleInputChange()
+* moveUp()
+* moveDown()
+* id
+* name
+* initiative
+* hp
+* ac
+* cmb
+* cmd
+* notes
+* turnOwner
 ******************************************************************************/
 export default class DataRow extends React.Component {
   constructor(props){
     super(props);
-    this.cellIDCounter = 0;
-    this.state = {
-      name: '',
-      initiative: 0,
-      hp: 0,
-      ac: 0,
-      cmb: 0,
-      cmd: 0,
-      notes: '',
-      turnOwner: false,
-      updateTurnOwner: this.updateTurnOwner
-    };
   }
 
   /**
    * Deletes the row.
    */
-  delete = () => {
+  deleteRow = () => {
     this.props.deleteRow(this.props.id);
   }
 
   /**
    * Handles the change event on the inputs and updates the appropriate state value.
    */
-  handleInputChange = (event) => {
-    /** Update the name. */
-    if(this.state.turnOwner && event.target.name == 'name'){
-      this.props.updateName(event.target.value);
-    }
-
-    this.setState({[event.target.name]: event.target.value});
+  handleInputChange = () => {
+    this.props.handleInputChange(this.props.id, event);
   }
 
-  updateTurnOwner = (turnOwner) => {
-    this.setState({turnOwner: turnOwner});
+  /**
+   * Moves the row down.
+   */
+  moveDown = () => {
+    this.props.moveDown(this.props.id);
   }
 
-  render() {  
+  /**
+   * Moves the row up.
+   */
+  moveUp = () => {
+    this.props.moveUp(this.props.id);
+  }
+
+  render() {
     return (
       <React.Fragment>
-        <tr style={{backgroundColor: this.state.turnOwner ? 'blue' : 'white'}}>
-          <td><button onClick={this.delete}>X</button></td>
-          <td><input name="name"       value={this.state.name}       onChange={this.handleInputChange}/></td>
-          <td><input name="initiative" value={this.state.initiative} onChange={this.handleInputChange}/></td>
-          <td><input name="hp"         value={this.state.hp}         onChange={this.handleInputChange}/></td>
-          <td><input name="ac"         value={this.state.ac}         onChange={this.handleInputChange}/></td>
-          <td><input name="cmb"        value={this.state.cmb}        onChange={this.handleInputChange}/></td>
-          <td><input name="cmd"        value={this.state.cmd}        onChange={this.handleInputChange}/></td>
-          <td><input name="notes"      value={this.state.notes}      onChange={this.handleInputChange}/></td>
+        <tr style={{backgroundColor: this.props.turnOwner ? 'blue' : 'white'}}>
+          <td>
+            <button onClick={this.deleteRow}>X</button>
+            <button onClick={this.moveUp}>^</button>
+            <button onClick={this.moveDown}>V</button>
+          </td>
+          <td><input name="name"       value={this.props.name}       onChange={this.handleInputChange}/></td>
+          <td><input name="initiative" value={this.props.initiative} onChange={this.handleInputChange}/></td>
+          <td><input name="hp"         value={this.props.hp}         onChange={this.handleInputChange}/></td>
+          <td><input name="ac"         value={this.props.ac}         onChange={this.handleInputChange}/></td>
+          <td><input name="cmb"        value={this.props.cmb}        onChange={this.handleInputChange}/></td>
+          <td><input name="cmd"        value={this.props.cmd}        onChange={this.handleInputChange}/></td>
+          <td><input name="notes"      value={this.props.notes}      onChange={this.handleInputChange}/></td>
         </tr>
       </React.Fragment>
     );

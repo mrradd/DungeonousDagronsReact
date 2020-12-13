@@ -44,6 +44,9 @@ export default class DataRow extends React.Component {
             <input name="ac" value={this.props.ac} onChange={this.handleInputChange}/>
           </td>
           <td>
+            <input name="dex" value={this.props.dex} onChange={this.handleInputChange}/>
+          </td>
+          <td>
             <input name="notes" value={this.props.notes} onChange={this.handleInputChange}/>
           </td>
         </tr>
@@ -54,6 +57,7 @@ export default class DataRow extends React.Component {
 
 DataRow.propTypes = {
   ac:                PropTypes.number,
+  dex:               PropTypes.number,
   handleInputChange: PropTypes.func,
   hp:                PropTypes.number,
   id:                PropTypes.number,

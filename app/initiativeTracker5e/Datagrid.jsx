@@ -17,6 +17,7 @@ export default class DataGrid extends React.Component{
         initiative: 0,
         hp: 0,
         ac: 0,
+        dex: 0,
         notes: '',
         turnOwner: false
       }],
@@ -26,6 +27,7 @@ export default class DataGrid extends React.Component{
         'Initiative',
         'HP',
         'AC',
+        'DEX',
         'Notes'
       ],
       getTurnOwnerName: this.getTurnOwnerName
@@ -58,6 +60,7 @@ export default class DataGrid extends React.Component{
       initiative: 0,
       hp: 0,
       ac: 0,
+      dex: 0,
       notes: '',
       turnOwner: false
     };
@@ -305,6 +308,7 @@ export default class DataGrid extends React.Component{
           initiative={row.initiative}
           hp={row.hp}
           ac={row.ac}
+          dex={row.dex}
           notes={row.notes}
           turnOwner={row.turnOwner}
           handleInputChange={this.handleInputChange}
@@ -354,13 +358,36 @@ export default class DataGrid extends React.Component{
   render(){
     return (
       <div>
-        <button style={{color: 'red'}} onClick={this.deleteRow} ><span className="material-icons">clear</span> </button>
-        <button onClick={this.moveUp}> <span className="material-icons">keyboard_arrow_up</span> </button>
-        <button onClick={this.moveDown}> <span className="material-icons">keyboard_arrow_down</span> </button>
-        <button style={{color: 'green'}} onClick={this.addRow}><span className="material-icons">add_circle</span></button>
-        <button onClick={this.prevTurn}><span className="material-icons">skip_previous</span></button>
-        <button onClick={this.nextTurn}><span className="material-icons">skip_next</span></button>
-        <button style={{color: 'orange'}} onClick={this.orderByInitiative}><span className="material-icons">reorder</span></button>
+        <button className="tooltip" style={{color: 'red'}} onClick={this.deleteRow}>
+          <span className="material-icons">clear</span>
+          <span className="tooltiptext">Delete selected row.</span>
+        </button>
+        <button className="tooltip" onClick={this.moveUp}>
+          <span className="material-icons">keyboard_arrow_up</span>
+          <span className="tooltiptext">Move selected row up.</span>
+        </button>
+        <button className="tooltip" onClick={this.moveDown}>
+          <span className="material-icons">keyboard_arrow_down</span>
+          <span className="tooltiptext">Move selected row down.</span>
+        </button>
+        <button className="tooltip" style={{color: 'green'}} onClick={this.addRow}>
+          <span className="material-icons">add_circle</span>
+          <span className="tooltiptext">Add new row.</span>
+        </button>
+        <button className="tooltip" onClick={this.prevTurn}>
+          <span className="material-icons">skip_previous</span>
+          <span className="tooltiptext">Previous turn.</span>
+        </button>
+        <button className="tooltip" onClick={this.nextTurn}>
+          <span className="material-icons">skip_next</span>
+          <span className="tooltiptext">Next turn.</span>
+        </button>
+        <button className="tooltip" style={{color: 'orange'}} onClick={this.orderByInitiative}>
+          <span className="material-icons">reorder</span>
+          <span className="tooltiptext">Order by initiative</span>
+        </button>
+        <br></br>
+        <br></br>
         <table>
           <tbody>
             <tr key={0} id={0}>
@@ -370,6 +397,7 @@ export default class DataGrid extends React.Component{
               <th>{this.state.columns[3]}</th>
               <th>{this.state.columns[4]}</th>
               <th>{this.state.columns[5]}</th>
+              <th>{this.state.columns[6]}</th>
             </tr>
             {this.renderRows()}
           </tbody>

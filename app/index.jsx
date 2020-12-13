@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import {InitiativeTrackerPathfinder} from './initiativeTrackerPathfinder/InitiativeTrackerPathfinder.jsx';
+import {InitiativeTracker5e} from './initiativeTracker5e/InitiativeTracker5e.jsx';
 
 class App extends React.Component{
   render(){
     return(
       <div>
-        <InitiativeTrackerPathfinder/>
+        <InitiativeTracker5e/>
       </div>
     )
   }

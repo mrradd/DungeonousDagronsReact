@@ -1,27 +1,22 @@
 import React from 'react';
 import DataRow from './DataRow.jsx';
+import PropTypes from 'prop-types';
 
 /******************************************************************************
 * Class DataGrid *
 * Displays a list of the characters and some info about them.
-* props
-* incrementTurn()
-* decrementTurn()
-* updateName()
-* round
 ******************************************************************************/
 export default class DataGrid extends React.Component{
   constructor(props){
     super(props);
     this.state = {
+      selectedID: 0,
       rows: [{
         id: 0,
         name: '',
         initiative: 0,
         hp: 0,
         ac: 0,
-        cmb: 0,
-        cmd: 0,
         notes: '',
         turnOwner: false
       }],
@@ -31,8 +26,6 @@ export default class DataGrid extends React.Component{
         'Initiative',
         'HP',
         'AC',
-        'CMB',
-        'CMD',
         'Notes'
       ],
       getTurnOwnerName: this.getTurnOwnerName
@@ -65,15 +58,13 @@ export default class DataGrid extends React.Component{
       initiative: 0,
       hp: 0,
       ac: 0,
-      cmb: 0,
-      cmd: 0,
       notes: '',
       turnOwner: false
     };
 
     rows.push(row);
 
-    this.setState({rows: rows});
+    this.setState({rows: rows, selectedID: -1});
   };
 
   componentDidUpdate(){
@@ -88,13 +79,14 @@ export default class DataGrid extends React.Component{
    * Delete a row from the row list for given id.
    * @param  id  ID of row to delete.
    */
-  deleteRow = (id) => {
+  deleteRow = () => {
     var rows = this.state.rows.slice();
+    var id = this.state.selectedID;
     rows     = rows.filter(function(row){return row.id != id; });
-    this.setState({rows: rows});
+    this.setState({rows: rows, selectedID: -1});
   };
 
-  /**
+  /** //TODO CH  'event' WAS DEPRECATED. MAY NEED TO FIND ANOTHER WAY TO DO THIS IN THE FUTURE.
    * Handles the change event on the inputs and updates the appropriate row.
    * @param  id     ID of row to change.
    * @param  event  Event from input being changed.
@@ -130,10 +122,9 @@ export default class DataGrid extends React.Component{
 
   /**
    * Moves row down one.
-   * @param  id  ID of row to move.
    */
-  moveDown = (id) => {
-    if(this.state.rows.length <= 1){
+  moveDown = () => {
+    if(this.state.rows.length <= 1 || this.state.selectedID < 0){
       return;
     }
 
@@ -141,7 +132,7 @@ export default class DataGrid extends React.Component{
     var index = 0;
 
     for(var i = 0; i < rows.length; i++){
-      if(rows[i].id == id){
+      if(rows[i].id == this.state.selectedID){
         if(i + 1 > rows.length){
           return;
         }
@@ -160,10 +151,9 @@ export default class DataGrid extends React.Component{
 
   /**
    * Moves row up one.
-   * @param  id  ID of row to move.
    */
-  moveUp = (id) => {
-    if(this.state.rows.length <= 1){
+  moveUp = () => {
+    if(this.state.rows.length <= 1 || this.state.selectedID < 0){
       return;
     }
 
@@ -171,7 +161,7 @@ export default class DataGrid extends React.Component{
     var index = 0;
     
     for(var i = 0; i < rows.length; i++){
-      if(rows[i].id == id){
+      if(rows[i].id == this.state.selectedID){
         if(i - 1 < 0){
           return;
         }
@@ -305,6 +295,8 @@ export default class DataGrid extends React.Component{
    */
   renderRows = () =>{
     var rows = this.state.rows.map((row) => {
+      var selekted = this.state.selectedID == row.id;
+
       return (
         <DataRow
           key={row.id}
@@ -313,15 +305,12 @@ export default class DataGrid extends React.Component{
           initiative={row.initiative}
           hp={row.hp}
           ac={row.ac}
-          cmb={row.cmb}
-          cmd={row.cmd}
           notes={row.notes}
           turnOwner={row.turnOwner}
           handleInputChange={this.handleInputChange}
-          deleteRow={this.deleteRow}
           updateName={this.updateName}
-          moveDown={this.moveDown}
-          moveUp={this.moveUp}
+          setSelectedID={this.setSelectedID}
+          selected={selekted}
           >
         </DataRow>);
     });
@@ -329,8 +318,16 @@ export default class DataGrid extends React.Component{
     return rows;
   }
 
+  /** Sets the selected ID.
+   * @param  id  ID of the character selected.
+   */
+  setSelectedID = (id) => {
+    this.setState({selectedID: this.state.selectedID == id ? -1 : id});
+  }
+
   /**
    * Calls the tracker's update name function.
+   * @param  name  Name of owner.
    */
   updateName = (name) => {
     this.props.updateName(name);
@@ -357,10 +354,13 @@ export default class DataGrid extends React.Component{
   render(){
     return (
       <div>
-        <button onClick={this.addRow}>Add Character</button>
-        <button onClick={this.nextTurn}>Next Turn</button>
-        <button onClick={this.prevTurn}>Previous Turn</button>
-        <button onClick={this.orderByInitiative}>Order by Initiative</button>
+        <button style={{color: 'red'}} onClick={this.deleteRow} ><span className="material-icons">clear</span> </button>
+        <button onClick={this.moveUp}> <span className="material-icons">keyboard_arrow_up</span> </button>
+        <button onClick={this.moveDown}> <span className="material-icons">keyboard_arrow_down</span> </button>
+        <button style={{color: 'green'}} onClick={this.addRow}><span className="material-icons">add_circle</span></button>
+        <button onClick={this.prevTurn}><span className="material-icons">skip_previous</span></button>
+        <button onClick={this.nextTurn}><span className="material-icons">skip_next</span></button>
+        <button style={{color: 'orange'}} onClick={this.orderByInitiative}><span className="material-icons">reorder</span></button>
         <table>
           <tbody>
             <tr key={0} id={0}>
@@ -370,8 +370,6 @@ export default class DataGrid extends React.Component{
               <th>{this.state.columns[3]}</th>
               <th>{this.state.columns[4]}</th>
               <th>{this.state.columns[5]}</th>
-              <th>{this.state.columns[6]}</th>
-              <th>{this.state.columns[7]}</th>
             </tr>
             {this.renderRows()}
           </tbody>
@@ -379,4 +377,11 @@ export default class DataGrid extends React.Component{
       </div>
     );
   }
+}
+
+DataGrid.protoTypes = {
+  incrementTurn: PropTypes.func,
+  decrementTurn: PropTypes.func,
+  updateName: PropTypes.func,
+  round: PropTypes.number
 }

@@ -9,8 +9,8 @@ export class InitiativeTracker5e extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      round: 0,
-      seconds: '00',
+      round: 1,
+      seconds: '06',
       minutes: '00',
       name: ''
     }
@@ -19,17 +19,17 @@ export class InitiativeTracker5e extends React.Component{
   }
   
   /** Decrements the current round. Makes sure it doesn't go negative */
-  decrementRound = () => {
-    var r = this.state.round;
-    r--;
+  // decrementRound = () => {
+  //   var r = this.state.round;
+  //   r--;
 
-    /** Make sure we don't go into negative rounds. */
-    if(r < 1){
-      r = 1;
-    }
+  //   /** Make sure we don't go into negative rounds. */
+  //   if(r < 1){
+  //     r = 1;
+  //   }
     
-    this.setState({round: r});
-  }
+  //   this.setState({round: r});
+  // }
 
   /** Increments the current round and clock. */
   incrementRound = () => {
@@ -45,8 +45,9 @@ export class InitiativeTracker5e extends React.Component{
     this.setState({round: round});
   }
 
-  /** Updates the name.
-   * 
+  /** 
+   * Updates the name.
+   * @param  name  Name of the character whose turn it is.
    */
   updateName = (name) => {
     this.setState({name: name});

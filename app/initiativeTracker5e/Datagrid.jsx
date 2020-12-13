@@ -233,7 +233,7 @@ export default class DataGrid extends React.Component{
       
       for(var i = 0; i < rows.length - 1; i++)
         {
-        if(rows[i].initiative > rows[i+1].initiative)
+        if(rows[i].initiative < rows[i+1].initiative)
           {
           var temp    = rows[i];
           rows[i]     = rows[i + 1];

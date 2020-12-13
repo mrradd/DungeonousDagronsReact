@@ -9,7 +9,7 @@ export class InitiativeTracker5e extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      round: 1,
+      round: 0,
       seconds: '00',
       minutes: '00',
       name: ''

@@ -389,6 +389,15 @@ export default class DataGrid extends React.Component{
         <br></br>
         <br></br>
         <table>
+          <colgroup>
+            <col style={{width: "50px"}}></col>
+            <col style={{width: "100px"}}></col>
+            <col style={{width: "100px"}}></col>
+            <col style={{width: "100px"}}></col>
+            <col style={{width: "100px"}}></col>
+            <col style={{width: "100px"}}></col>
+            <col style={{width: "300px"}}></col>
+          </colgroup>
           <tbody>
             <tr key={0} id={0}>
               <th>{this.state.columns[0]}</th>

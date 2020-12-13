@@ -47,7 +47,7 @@ export default class DataRow extends React.Component {
             <input name="dex" value={this.props.dex} onChange={this.handleInputChange}/>
           </td>
           <td>
-            <input name="notes" value={this.props.notes} onChange={this.handleInputChange}/>
+            <input style={{width:"500px"}} name="notes" value={this.props.notes} onChange={this.handleInputChange}/>
           </td>
         </tr>
       </React.Fragment>

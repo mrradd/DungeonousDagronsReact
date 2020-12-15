@@ -85,7 +85,7 @@ export default class DataGrid extends React.Component{
   deleteRow = () => {
     var rows = this.state.rows.slice();
     var id = this.state.selectedID;
-    rows     = rows.filter(function(row){return row.id != id; });
+    rows = rows.filter(function(row){return row.id !== id; });
     this.setState({rows: rows, selectedID: -1});
   };
 
@@ -100,9 +100,9 @@ export default class DataGrid extends React.Component{
     var name  = event.target.name;
 
     for(var i = 0; i < rows.length; i++){
-      if(rows[i].id == id){
+      if(rows[i].id === id){
         /** Make sure value is an int. */
-        if(name != 'name' && name != 'notes'){
+        if(name !== 'name' && name !== 'notes'){
           if(/^-?\d*$/.test(value)){
             value = Number(value);
           }
@@ -112,7 +112,7 @@ export default class DataGrid extends React.Component{
         }
 
         /** Update the name. */
-        if(rows[i].turnOwner && name == 'name'){
+        if(rows[i].turnOwner && name === 'name'){
           this.updateName(value);
         }
 
@@ -135,7 +135,7 @@ export default class DataGrid extends React.Component{
     var index = 0;
 
     for(var i = 0; i < rows.length; i++){
-      if(rows[i].id == this.state.selectedID){
+      if(rows[i].id === this.state.selectedID){
         if(i + 1 > rows.length){
           return;
         }
@@ -164,7 +164,7 @@ export default class DataGrid extends React.Component{
     var index = 0;
     
     for(var i = 0; i < rows.length; i++){
-      if(rows[i].id == this.state.selectedID){
+      if(rows[i].id === this.state.selectedID){
         if(i - 1 < 0){
           return;
         }
@@ -236,8 +236,11 @@ export default class DataGrid extends React.Component{
       
       for(var i = 0; i < rows.length - 1; i++)
         {
-        var init1 = parseFloat(rows[i].initiative + '.' + rows[i].dex);
-        var init2 = parseFloat(rows[i+1].initiative + '.' + rows[i+1].dex);
+        var dex1 = rows[i].dex < 10 ? '0' + rows[i].dex : '' + rows[i].dex;
+        var dex2 = rows[i+1].dex < 10 ? '0' + rows[i+1].dex : '' + rows[i+1].dex;
+        var init1 = parseFloat(rows[i].initiative + '.' + dex1);
+        var init2 = parseFloat(rows[i+1].initiative + '.' + dex2);
+
         if(init1 < init2)
           {
           var temp    = rows[i];
@@ -300,7 +303,7 @@ export default class DataGrid extends React.Component{
    */
   renderRows = () =>{
     var rows = this.state.rows.map((row) => {
-      var selekted = this.state.selectedID == row.id;
+      var selekted = this.state.selectedID === row.id;
 
       return (
         <DataRow
@@ -328,7 +331,7 @@ export default class DataGrid extends React.Component{
    * @param  id  ID of the character selected.
    */
   setSelectedID = (id) => {
-    this.setState({selectedID: this.state.selectedID == id ? -1 : id});
+    this.setState({selectedID: this.state.selectedID === id ? -1 : id});
   }
 
   /**

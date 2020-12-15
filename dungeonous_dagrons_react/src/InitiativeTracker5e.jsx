@@ -39,10 +39,7 @@ export class InitiativeTracker5e extends React.Component{
     var seconds = ((round * 6) % 60);
     var minutes = (Math.floor(round / 10));
     
-    this.state.seconds = ("0" + seconds).slice(-2);
-    this.state.minutes = ("0" + minutes).slice(-2);
-
-    this.setState({round: round});
+    this.setState({seconds:("0" + seconds).slice(-2), minutes: ("0" + minutes).slice(-2), round: round});
   }
 
   /** 

@@ -1,4 +1,4 @@
 # DungeonousDagronsReact
 Dungeonous Dagrons but written using React.
 
-To start just run 'npm start'
+create-react-app was not used to make this. To start just run 'npm start'

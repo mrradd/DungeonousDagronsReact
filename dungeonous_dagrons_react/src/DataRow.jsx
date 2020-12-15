@@ -13,7 +13,7 @@ export default class DataRow extends React.Component {
   /**
    * Handles the change event on the inputs and updates the appropriate state value.
    */
-  handleInputChange = () => {
+  handleInputChange = (event) => {
     this.props.handleInputChange(this.props.id, event);
   }
 

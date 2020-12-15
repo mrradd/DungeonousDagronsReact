@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import {InitiativeTracker5e} from './initiativeTracker5e/InitiativeTracker5e.jsx';
+import {InitiativeTracker5e} from './InitiativeTracker5e.jsx';
 
 class App extends React.Component{
   render(){

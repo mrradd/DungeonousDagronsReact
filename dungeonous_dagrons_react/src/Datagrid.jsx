@@ -136,7 +136,7 @@ export default class DataGrid extends React.Component{
 
     for(var i = 0; i < rows.length; i++){
       if(rows[i].id === this.state.selectedID){
-        if(i + 1 > rows.length){
+        if(i + 1 > rows.length - 1){
           return;
         }
 

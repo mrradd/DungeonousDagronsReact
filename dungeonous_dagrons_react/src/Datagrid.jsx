@@ -236,10 +236,8 @@ export default class DataGrid extends React.Component{
       
       for(var i = 0; i < rows.length - 1; i++)
         {
-        var dex1 = rows[i].dex < 10 ? '0' + rows[i].dex : '' + rows[i].dex;
-        var dex2 = rows[i+1].dex < 10 ? '0' + rows[i+1].dex : '' + rows[i+1].dex;
-        var init1 = parseFloat(rows[i].initiative + '.' + dex1);
-        var init2 = parseFloat(rows[i+1].initiative + '.' + dex2);
+        var init1 = rows[i].initiative + rows[i].dex/100;
+        var init2 = rows[i+1].initiative + rows[i+1].dex/100;
 
         if(init1 < init2)
           {

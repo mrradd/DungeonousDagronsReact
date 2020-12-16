@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/DungeonousDagronsReact/static/css/main.3c5c4e2a.chunk.css",
-    "main.js": "/DungeonousDagronsReact/static/js/main.3c2df2d9.chunk.js",
-    "main.js.map": "/DungeonousDagronsReact/static/js/main.3c2df2d9.chunk.js.map",
+    "main.js": "/DungeonousDagronsReact/static/js/main.db7ef6b8.chunk.js",
+    "main.js.map": "/DungeonousDagronsReact/static/js/main.db7ef6b8.chunk.js.map",
     "runtime-main.js": "/DungeonousDagronsReact/static/js/runtime-main.d59d28d4.js",
     "runtime-main.js.map": "/DungeonousDagronsReact/static/js/runtime-main.d59d28d4.js.map",
     "static/js/2.fdc340fd.chunk.js": "/DungeonousDagronsReact/static/js/2.fdc340fd.chunk.js",
@@ -15,6 +15,6 @@
     "static/js/runtime-main.d59d28d4.js",
     "static/js/2.fdc340fd.chunk.js",
     "static/css/main.3c5c4e2a.chunk.css",
-    "static/js/main.3c2df2d9.chunk.js"
+    "static/js/main.db7ef6b8.chunk.js"
   ]
 }

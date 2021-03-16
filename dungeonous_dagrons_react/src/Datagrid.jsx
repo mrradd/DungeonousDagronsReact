@@ -33,6 +33,7 @@ export default class DataGrid extends React.Component{
       getTurnOwnerName: this.getTurnOwnerName
     };
 
+    this.cookieName = "ddrEncounter=";
     this.rowRefs = []
   }
 
@@ -121,6 +122,22 @@ export default class DataGrid extends React.Component{
         break;
       }
     }
+  }
+
+  /**
+   * Load the encounter from cookies.
+   */
+  load = () => {
+
+    var cookieValue = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('ddrEncounter='))
+      .split('=')[1];
+
+    var stateObj = JSON.parse(cookieValue);
+
+    this.props.loadState(stateObj.minutes, stateObj.seconds, stateObj.round);
+    this.setState(stateObj);
   }
 
   /**
@@ -325,7 +342,24 @@ export default class DataGrid extends React.Component{
     return rows;
   }
 
-  /** Sets the selected ID.
+  /**
+   * Save the encounter to cookies.
+   */
+  save = () => {
+    var saveObj = {
+      rows: this.state.rows,
+      minutes: this.props.minutes,
+      seconds: this.props.seconds,
+      round: this.props.round
+    };
+    
+    var saveStr = JSON.stringify(saveObj);
+    
+    document.cookie = this.cookieName + saveStr;
+  }
+
+  /** 
+   * Sets the selected ID.
    * @param  id  ID of the character selected.
    */
   setSelectedID = (id) => {
@@ -363,31 +397,39 @@ export default class DataGrid extends React.Component{
       <div>
         <button className="tooltip" style={{color: 'red'}} onClick={this.deleteRow}>
           <span className="material-icons">clear</span>
-          <span className="tooltiptext">Delete selected row.</span>
+          <span className="tooltiptext">Delete selected row</span>
         </button>
         <button className="tooltip" onClick={this.moveUp}>
           <span className="material-icons">keyboard_arrow_up</span>
-          <span className="tooltiptext">Move selected row up.</span>
+          <span className="tooltiptext">Move selected row up</span>
         </button>
         <button className="tooltip" onClick={this.moveDown}>
           <span className="material-icons">keyboard_arrow_down</span>
-          <span className="tooltiptext">Move selected row down.</span>
+          <span className="tooltiptext">Move selected row down</span>
         </button>
         <button className="tooltip" style={{color: 'green'}} onClick={this.addRow}>
           <span className="material-icons">add_circle</span>
-          <span className="tooltiptext">Add new row.</span>
+          <span className="tooltiptext">Add new row</span>
         </button>
         <button className="tooltip" onClick={this.prevTurn}>
           <span className="material-icons">skip_previous</span>
-          <span className="tooltiptext">Previous turn.</span>
+          <span className="tooltiptext">Previous turn</span>
         </button>
         <button className="tooltip" onClick={this.nextTurn}>
           <span className="material-icons">skip_next</span>
-          <span className="tooltiptext">Next turn.</span>
+          <span className="tooltiptext">Next turn</span>
         </button>
         <button className="tooltip" style={{color: 'orange'}} onClick={this.orderByInitiative}>
           <span className="material-icons">reorder</span>
           <span className="tooltiptext">Order by initiative</span>
+        </button>
+        <button className="tooltip" style={{color: 'green'}} onClick={this.save}>
+          <span className="material-icons">save</span>
+          <span className="tooltiptext">Save encounter</span>
+        </button>
+        <button className="tooltip" style={{color: 'blue'}} onClick={this.load}>
+          <span className="material-icons">save_alt</span>
+          <span className="tooltiptext">Load encounter from cookies</span>
         </button>
         <br></br>
         <br></br>
@@ -423,5 +465,8 @@ DataGrid.protoTypes = {
   incrementTurn: PropTypes.func,
   decrementTurn: PropTypes.func,
   updateName: PropTypes.func,
-  round: PropTypes.number
+  round: PropTypes.number,
+  seconds: PropTypes.string,
+  minutes: PropTypes.string,
+  loadState: PropTypes.func
 }

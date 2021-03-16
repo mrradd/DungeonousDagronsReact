@@ -42,6 +42,16 @@ export class InitiativeTracker5e extends React.Component{
     this.setState({seconds:("0" + seconds).slice(-2), minutes: ("0" + minutes).slice(-2), round: round});
   }
 
+  /**
+   * Loads information sent from the datagrid.
+   * @param  mins  Minutes elapsed.
+   * @param  secs  Seconds elapsed.
+   * @param  rnd   Current round.
+   */
+  loadState = (mins, secs, rnd) => {
+    this.setState({minutes: mins, seconds: secs, round: rnd});
+  }
+
   /** 
    * Updates the name.
    * @param  name  Name of the character whose turn it is.
@@ -58,7 +68,14 @@ export class InitiativeTracker5e extends React.Component{
           <h3>{this.state.minutes} : {this.state.seconds} - Round: {this.state.round}</h3>
           <h3>{this.state.name.length > 0 ? this.state.name : "No Name"}'s Turn</h3>
         </div>
-        <DataGrid round={this.state.round} updateName={this.updateName} incrementRound={this.incrementRound} decrementRound={this.decrementRound}/>
+        <DataGrid
+          round={this.state.round}
+          updateName={this.updateName}
+          incrementRound={this.incrementRound}
+          decrementRound={this.decrementRound}
+          loadState={this.loadState}
+          minutes={this.state.minutes}
+          seconds={this.state.seconds}/>
       </div>
     );
   }
